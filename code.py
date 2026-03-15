@@ -15,7 +15,7 @@ pixels = neopixel.NeoPixel(board.NEOPIXEL, NUM_PIXELS, brightness=0.3, auto_writ
 ser = usb_cdc.console
 ser.timeout = 0
 
-current_anim = "rainbow"
+current_anim = "off"
 anim_color = (255, 0, 0)
 anim_speed = 0.03
 step = 0
@@ -36,7 +36,7 @@ COLORS = {
 }
 
 NO_ARG_ANIMS = ("off", "rainbow", "fire")
-COLOR_ANIMS = ("solid", "pulse", "blink", "breathe")
+COLOR_ANIMS = ("solid", "pulse", "blink", "breathe", "fadeout", "fadein")
 
 
 def wheel(pos):
@@ -103,7 +103,7 @@ def process_command(line):
 
 
 def do_animation():
-    global step
+    global step, current_anim
 
     if current_anim == "off":
         pixels.fill((0, 0, 0))
@@ -130,6 +130,26 @@ def do_animation():
         r, g, bl = anim_color
         pixels.fill((int(r * b), int(g * b), int(bl * b)))
         step += 1
+    elif current_anim == "fadein":
+        steps = 50
+        if step < steps:
+            b = step / steps
+            r, g, bl = anim_color
+            pixels.fill((int(r * b), int(g * b), int(bl * b)))
+            step += 1
+        else:
+            pixels.fill(anim_color)
+            current_anim = "solid"
+    elif current_anim == "fadeout":
+        steps = 50
+        if step < steps:
+            b = 1.0 - (step / steps)
+            r, g, bl = anim_color
+            pixels.fill((int(r * b), int(g * b), int(bl * b)))
+            step += 1
+        else:
+            pixels.fill((0, 0, 0))
+            current_anim = "off"
 
     pixels.show()
 
