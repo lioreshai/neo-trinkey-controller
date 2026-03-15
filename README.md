@@ -55,6 +55,16 @@ elif current_anim == "myeffect":
 
 Then add `"myeffect"` to the command list in `process_command()`. Copy the updated file to the CIRCUITPY drive — it auto-reloads.
 
+## Troubleshooting
+
+If the Trinkey is unresponsive after a firmware crash (stuck in REPL), reset it before redeploying:
+
+```bash
+python3 -c "import serial; s=serial.Serial('/dev/ttyACM0', 115200); s.write(b'\x03\x04'); s.close()"
+```
+
+This sends ctrl-C (interrupt) + ctrl-D (soft reboot). CircuitPython will reload `code.py` from the CIRCUITPY drive.
+
 ## CircuitPython gotchas
 
 This targets CircuitPython 10.x on SAMD21, which differs from CPython:
