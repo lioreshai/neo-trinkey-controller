@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Send commands to a Neo Trinkey over USB serial."""
+import serial
+import sys
+import time
+
+PORT = "/dev/ttyACM0"
+BAUD = 115200
+
+USAGE = """\
+Usage: neopixel <command> [args]
+
+Animations:
+  off                    Turn off all pixels
+  rainbow                Rainbow color cycle
+  fire                   Flickering fire effect
+  solid <color>          Solid color
+  pulse <color>          Pulsing
+  blink <color>          Blinking
+  breathe <color>        Slow breathing
+
+Settings:
+  brightness <0.0-1.0>   Set brightness
+  speed <seconds>         Animation frame delay
+  status                  Current state
+
+Colors: red green blue white yellow cyan magenta orange purple pink warm
+        or r,g,b (e.g. 255,128,0)"""
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(USAGE)
+        sys.exit(0)
+
+    cmd = " ".join(sys.argv[1:])
+    try:
+        conn = serial.Serial(PORT, BAUD, timeout=2)
+        time.sleep(0.3)
+        conn.read(conn.in_waiting)
+        conn.write((cmd + "\r\n").encode())
+        time.sleep(0.5)
+        resp = conn.read(conn.in_waiting).decode(errors="ignore").strip()
+        if resp:
+            print(resp)
+        conn.close()
+    except serial.SerialException as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

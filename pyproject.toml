@@ -1,0 +1,8 @@
+[tool.ruff]
+line-length = 99
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+# code.py uses CircuitPython APIs that ruff can't resolve
+per-file-ignores = {"code.py" = ["E402", "F811"]}
